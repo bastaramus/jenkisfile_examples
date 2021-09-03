@@ -1,0 +1,44 @@
+@Library('jenkins_shared_lib_example') _
+
+def port
+
+pipeline {
+    agent any
+
+    stages {
+        stage('linux & win') {
+            parallel {
+                stage('linux') {
+                    agent { node { label "linux"} }
+                    steps {
+                        script {
+                            lib.Command_Execution("whoami")
+                        }
+                    }
+                }
+                stage('windows') {
+                    agent { node { label "windows"} }
+                    steps {
+                        script {
+                            lib.Command_Execution("whoami")
+                        }
+                    }
+                }
+            }
+        }
+        stage('Get random port') {
+            steps {
+                script {
+                    port = lib.getRandomPort()
+                }
+            }
+        }
+        stage('Print random port') {
+            steps {
+                script {
+                    lib.Info_Msg("Random port number: ${port}")
+                }
+            }
+        }
+    }
+}
